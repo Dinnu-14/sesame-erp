@@ -1,0 +1,7 @@
+{% load core_extras %}
+<div class="card overflow-x-auto"><table class="w-full text-sm">
+<thead><tr><th>Date</th><th>Supplier</th><th class="num">Total (kg)</th><th>Variants (kg)</th><th class="num">Wastage</th></tr></thead>
+<tbody>{% for l in loads %}<tr><td>{{ l.date|date:"d M Y" }}</td><td>{{ l.supplier }}{% if l.vehicle_no %}<div class="text-xs text-clay">{{ l.vehicle_no }}</div>{% endif %}</td>
+<td class="num">{{ l.total_kg|qty }}</td>
+<td>{% for it in l.items.all %}<div>{{ it.product|plabel }}: {{ it.qty_kg|qty }}</div>{% endfor %}</td>
+<td class="num">{{ l.wastage_kg|qty }}</td></tr>{% empty %}<tr><td colspan="5" class="text-clay">No loads yet.</td></tr>{% endfor %}</tbody></table></div>

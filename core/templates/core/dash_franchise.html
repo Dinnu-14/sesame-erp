@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}{{ fr.name }}{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+  <div><h1 class="font-display text-3xl font-bold">{{ fr.name }}</h1><div class="text-clay">{{ fr.city }}</div></div>
+  {% if user.role == 'fsub' %}<div class="flex gap-2"><a class="btn" href="{% url 'sale_new' %}">+ New bill</a><a class="btn btn-ghost" href="{% url 'extraction_new' %}">Oil extraction</a></div>{% endif %}
+</div>
+
+{% if incoming %}
+<div class="card border-amber-300 bg-amber-50 p-4 mb-6">
+  <div class="font-semibold mb-2">Stock on the way: confirm what you received</div>
+  {% for t in incoming %}<div class="flex flex-wrap items-center justify-between gap-2 py-2 border-t border-amber-200 first:border-0">
+    <div class="text-sm">{{ t.date|date:"d M" }} · {% for it in t.items.all %}{{ it.product|plabel }} {{ it.qty_sent|qty }} kg{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+    {% if user.role == 'fmain' %}<a class="btn" href="{% url 'confirm_transfer' t.id %}">Confirm receipt</a>{% else %}<span class="text-xs text-clay">Waiting for the main admin</span>{% endif %}
+  </div>{% endfor %}
+</div>
+{% endif %}
+
+<div class="grid grid-cols-3 gap-3 mb-6">
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Sales today</div><div class="font-display text-2xl font-bold">₹{{ totals.today|qty }}</div></div>
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Last 7 days</div><div class="font-display text-2xl font-bold">₹{{ totals.week|qty }}</div></div>
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Last 30 days</div><div class="font-display text-2xl font-bold">₹{{ totals.month|qty }}</div></div>
+</div>
+<h2 class="font-display text-xl font-bold mb-2">Stock in shop</h2>
+{% include "core/_stock.html" with stock=stock %}
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Sales, last 14 days</h2>
+<div class="card p-4"><canvas id="sales" height="100"></canvas></div>
+{{ chart|json_script:"chart-data" }}
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Recent stock received</h2>
+{% include "core/_transfer_table.html" with rows=transfers %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const d = JSON.parse(document.getElementById('chart-data').textContent);
+d.datasets.forEach(s=>{s.backgroundColor='#B4691F'});
+new Chart(document.getElementById('sales'),{type:'bar',data:d,options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+</script>
+{% endblock %}

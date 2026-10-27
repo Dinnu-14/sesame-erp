@@ -1,0 +1,6 @@
+{% extends "core/base.html" %}
+{% block title %}Loads received{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">Loads received</h1>{% if user.role == 'factory' %}<a class="btn" href="{% url 'inward_add' %}">+ Receive load</a>{% endif %}</div>
+{% include "core/_loads_table.html" with loads=loads %}
+{% endblock %}

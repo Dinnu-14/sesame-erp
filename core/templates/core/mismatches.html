@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Mismatches{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl font-bold mb-1">Transfer mismatches</h1>
+<p class="text-clay mb-4">Cases where the franchise received a different quantity than the factory sent. Franchise stock was updated with what actually arrived.</p>
+{% for t in rows %}
+<div class="card p-4 mb-3">
+  <div class="flex flex-wrap justify-between gap-2"><div><b>{{ t.franchise.name }}</b> · {{ t.date|date:"d M Y" }}</div>{% include "core/_status.html" with status=t.status label=t.get_status_display %}</div>
+  <table class="w-full text-sm mt-2"><thead><tr><th>Variant</th><th class="num">Sent</th><th class="num">Received</th><th class="num">Difference</th></tr></thead><tbody>
+  {% for it in t.items.all %}<tr><td>{{ it.product|plabel }}</td><td class="num">{{ it.qty_sent|qty }}</td><td class="num">{{ it.qty_received|qty }}</td><td class="num {% if it.difference %}text-red-700 font-semibold{% endif %}">{{ it.difference|qty }}</td></tr>{% endfor %}</tbody></table>
+  {% if t.status == 'mismatch' %}
+  <form method="post" action="{% url 'resolve' t.id %}" class="flex flex-wrap gap-2 mt-3 fw">{% csrf_token %}<input name="resolution_note" placeholder="Resolution note (e.g. spillage during transport)" required class="flex-1"><button class="btn">Mark resolved</button></form>
+  {% else %}<p class="text-sm text-clay mt-2">Resolved: {{ t.resolution_note }}</p>{% endif %}
+</div>
+{% empty %}<div class="card p-6 text-clay">No mismatches. Every confirmed transfer matched.</div>{% endfor %}
+{% endblock %}

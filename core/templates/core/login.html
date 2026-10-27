@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto mt-10">
+  <h1 class="font-display text-4xl font-bold">Sufala <span class="text-toast">Sesame</span></h1>
+  <p class="text-clay mt-1 mb-6">Factory and franchise management</p>
+  <form method="post" class="card p-6 space-y-4">{% csrf_token %}
+    {% if form.errors %}<p class="text-sm text-red-700">Wrong username or password.</p>{% endif %}
+    <div><label class="block text-sm font-medium mb-1">Username</label><input class="input" name="username" autocomplete="username" autofocus required></div>
+    <div><label class="block text-sm font-medium mb-1">Password</label><input class="input" type="password" name="password" autocomplete="current-password" required></div>
+    <button class="btn w-full">Sign in</button>
+  </form>
+</div>
+{% endblock %}

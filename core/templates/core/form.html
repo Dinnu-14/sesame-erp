@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="max-w-xl">
+  <h1 class="font-display text-3xl font-bold mb-1">{{ title }}</h1>
+  {% if intro %}<p class="text-clay mb-4">{{ intro }}</p>{% endif %}
+  <form method="post" class="card p-5 space-y-4">{% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {% if field.field.widget.input_type == 'checkbox' %}{{ field }}{% else %}<div class="fw">{{ field }}</div>{% endif %}
+      {{ field.errors }}
+    </div>
+    {% endfor %}
+    <div class="flex gap-3 pt-2"><button class="btn">{{ submit }}</button><a class="btn btn-ghost" href="{% url back %}">Cancel</a></div>
+  </form>
+</div>
+{% endblock %}

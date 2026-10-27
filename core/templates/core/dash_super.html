@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Owner dashboard{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl font-bold mb-4">Business overview</h1>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Received today</div><div class="font-display text-2xl font-bold">{{ received_today|qty }} kg</div></div>
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Received (30 days)</div><div class="font-display text-2xl font-bold">{{ received_month|qty }} kg</div></div>
+  <div class="card p-4"><div class="text-xs uppercase text-clay">Awaiting confirmation</div><div class="font-display text-2xl font-bold">{{ pending }}</div></div>
+  <a href="{% url 'mismatches' %}" class="card p-4 {% if open_mismatch %}border-red-300 bg-red-50{% endif %}"><div class="text-xs uppercase text-clay">Open mismatches</div><div class="font-display text-2xl font-bold {% if open_mismatch %}text-red-700{% endif %}">{{ open_mismatch }}</div></a>
+</div>
+
+<h2 class="font-display text-xl font-bold mb-2">Factory godown stock</h2>
+{% include "core/_stock.html" with stock=fac %}
+<p class="text-sm text-clay mt-2">In transit (sent, not yet confirmed):
+  {% for p, v in in_transit.items %}{% if v > 0 %}{{ p|plabel }} {{ v|qty }} kg · {% endif %}{% endfor %}</p>
+
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Daily sales by franchise (last 7 days)</h2>
+<div class="card p-4"><canvas id="sales" height="110"></canvas></div>
+{{ chart|json_script:"chart-data" }}
+
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Franchises</h2>
+<div class="card overflow-x-auto"><table class="w-full text-sm">
+<thead><tr><th>Franchise</th><th class="num">Sales today</th><th class="num">Sales 30 days</th><th class="num">Seed stock (kg)</th><th class="num">Oil (L)</th><th class="num">Waste (kg)</th></tr></thead>
+<tbody>{% for r in franchises %}<tr><td>{{ r.f.name }}<div class="text-xs text-clay">{{ r.f.city }}</div></td>
+<td class="num">₹{{ r.today|qty }}</td><td class="num">₹{{ r.month|qty }}</td><td class="num">{{ r.seed|qty }}</td><td class="num">{{ r.oil|qty }}</td><td class="num">{{ r.waste|qty }}</td></tr>
+{% empty %}<tr><td colspan="6" class="text-clay">No franchises yet. <a class="underline" href="{% url 'franchise_add' %}">Add one</a>.</td></tr>{% endfor %}</tbody></table></div>
+
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Recent distribution</h2>
+{% include "core/_transfer_table.html" with rows=recent %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const d = JSON.parse(document.getElementById('chart-data').textContent);
+const colors = ['#B4691F','#2F5D3A','#1B1713','#8A7A63','#C99A5B','#5E8C6A'];
+d.datasets.forEach((s,i)=>{s.borderColor=colors[i%colors.length];s.backgroundColor=colors[i%colors.length];s.tension=.25});
+new Chart(document.getElementById('sales'),{type:'line',data:d,options:{plugins:{legend:{display:d.datasets.length>1}},scales:{y:{beginAtZero:true}}}});
+</script>
+{% endblock %}

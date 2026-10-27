@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Oil extraction{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">Oil extraction</h1>{% if user.role == 'fsub' %}<a class="btn" href="{% url 'extraction_new' %}">+ Record</a>{% endif %}</div>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Date</th><th>Seed</th><th class="num">Seed used (kg)</th><th class="num">Oil (L)</th><th class="num">Waste (kg)</th><th class="num">Oil per 100 kg</th></tr></thead><tbody>
+{% for e in rows %}<tr><td>{{ e.date|date:"d M" }}</td><td>{{ e.seed_product|plabel }}</td><td class="num">{{ e.seed_used|qty }}</td><td class="num">{{ e.oil_litres|qty }}</td><td class="num">{{ e.waste_kg|qty }}</td><td class="num">{% widthratio e.oil_litres e.seed_used 100 %}</td></tr>
+{% empty %}<tr><td colspan="6" class="text-clay">No extractions yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

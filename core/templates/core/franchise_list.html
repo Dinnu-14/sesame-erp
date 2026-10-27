@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block title %}Franchises{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">Franchises</h1><a class="btn" href="{% url 'franchise_add' %}">+ Add franchise</a></div>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Name</th><th>City</th><th>Contact</th><th class="num">Users</th><th>Status</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.f.name }}</td><td>{{ r.f.city }}</td><td>{{ r.f.contact_name }} {{ r.f.contact_phone }}</td><td class="num">{{ r.users }}</td>
+<td>{% if r.f.is_active %}Active{% else %}<span class="text-clay">Inactive</span>{% endif %}</td><td class="num"><a class="underline" href="{% url 'franchise_edit' r.f.id %}">Edit</a></td></tr>
+{% empty %}<tr><td colspan="6" class="text-clay">No franchises yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

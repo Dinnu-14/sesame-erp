@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Factory{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+  <h1 class="font-display text-3xl font-bold">Factory</h1>
+  <div class="flex gap-2"><a class="btn" href="{% url 'inward_add' %}">+ Receive load</a><a class="btn btn-ghost" href="{% url 'transfer_new' %}">Send stock</a></div>
+</div>
+<h2 class="font-display text-xl font-bold mb-2">Godown stock</h2>
+{% include "core/_stock.html" with stock=fac %}
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Sent, waiting for franchise to confirm</h2>
+{% include "core/_transfer_table.html" with rows=pending %}
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Waste waiting to be received</h2>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Date</th><th>Franchise</th><th class="num">Qty (kg)</th></tr></thead><tbody>
+{% for w in waste_pending %}<tr><td>{{ w.date|date:"d M" }}</td><td>{{ w.franchise.name }}</td><td class="num">{{ w.qty_kg|qty }}</td></tr>{% empty %}<tr><td colspan="3" class="text-clay">None.</td></tr>{% endfor %}
+</tbody></table>{% if waste_pending %}<div class="p-3"><a class="btn btn-ghost" href="{% url 'waste_list' %}">Receive waste</a></div>{% endif %}</div>
+<h2 class="font-display text-xl font-bold mt-8 mb-2">Latest loads</h2>
+{% include "core/_loads_table.html" with loads=loads %}
+{% endblock %}

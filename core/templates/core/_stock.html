@@ -1,0 +1,9 @@
+{% load core_extras %}
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+{% for p, v in stock.items %}
+  <div class="card p-4">
+    <div class="text-xs uppercase tracking-wide text-clay">{{ p|plabel }}</div>
+    <div class="font-display text-2xl font-bold mt-1 {% if v <= 0 %}text-clay{% endif %}">{{ v|qty }} <span class="text-sm font-sans font-medium text-clay">{{ p|punit }}</span></div>
+  </div>
+{% endfor %}
+</div>

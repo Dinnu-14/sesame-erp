@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">Users</h1><a class="btn" href="{% url 'user_add' %}">+ Add user</a></div>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Franchise</th><th>Status</th></tr></thead><tbody>
+{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.first_name }}</td><td>{{ u.get_role_display }}</td><td>{{ u.franchise|default:"-" }}</td><td>{% if u.is_active %}Active{% else %}Inactive{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

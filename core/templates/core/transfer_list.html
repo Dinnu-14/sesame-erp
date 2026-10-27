@@ -1,0 +1,6 @@
+{% extends "core/base.html" %}
+{% block title %}Transfers{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">{% if user.is_franchise_user %}Stock received{% else %}Distribution{% endif %}</h1>{% if user.role == 'factory' %}<a class="btn" href="{% url 'transfer_new' %}">+ Send stock</a>{% endif %}</div>
+{% include "core/_transfer_table.html" with rows=rows %}
+{% endblock %}

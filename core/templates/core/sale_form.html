@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}New bill{% endblock %}
+{% block content %}
+<div class="max-w-2xl">
+<h1 class="font-display text-3xl font-bold mb-4">New bill</h1>
+<form method="post" class="card p-5 space-y-4">{% csrf_token %}{{ form.non_field_errors }}
+<div class="grid sm:grid-cols-2 gap-3 fw"><div><label class="block text-sm mb-1">Date</label>{{ form.date }}</div><div><label class="block text-sm mb-1">Customer (optional)</label>{{ form.customer }}</div></div>
+<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Item</th><th>Quantity</th><th>Rate (₹)</th><th class="num">In stock</th></tr></thead><tbody>
+{% for p, label, unit, q, r in form.rows %}<tr><td class="font-medium">{{ label }} <span class="text-clay">({{ unit }})</span></td>
+<td class="fw" style="min-width:6.5rem">{{ q }}{{ q.errors }}</td><td class="fw" style="min-width:6.5rem">{{ r }}{{ r.errors }}</td><td class="num text-clay">{{ stock|get:p|qty }}</td></tr>{% endfor %}</tbody></table></div>
+<div class="flex gap-3"><button class="btn">Save bill</button><a class="btn btn-ghost" href="{% url 'home' %}">Cancel</a></div>
+</form></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Bills{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4"><h1 class="font-display text-3xl font-bold">Bills</h1>{% if user.role == 'fsub' %}<a class="btn" href="{% url 'sale_new' %}">+ New bill</a>{% endif %}</div>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Bill</th><th>Date</th><th>Customer</th><th>Items</th><th class="num">Total</th></tr></thead><tbody>
+{% for s in rows %}<tr><td>#{{ s.id }}</td><td>{{ s.date|date:"d M" }}</td><td>{{ s.customer|default:"-" }}</td>
+<td>{% for it in s.items.all %}<div>{{ it.product|plabel }}: {{ it.qty|qty }} {{ it.product|punit }} × ₹{{ it.rate|qty }}</div>{% endfor %}</td><td class="num">₹{{ s.total|qty }}</td></tr>
+{% empty %}<tr><td colspan="5" class="text-clay">No bills yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Sales report{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl font-bold mb-4">Franchise sales</h1>
+<form class="flex flex-wrap items-end gap-3 mb-4"><div class="fw"><label class="block text-xs text-clay mb-1">From</label><input type="date" name="start" value="{{ start }}"></div>
+<div class="fw"><label class="block text-xs text-clay mb-1">To</label><input type="date" name="end" value="{{ end }}"></div><button class="btn">Show</button></form>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Date</th><th>Franchise</th><th class="num">Bills</th><th class="num">Sales</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.date|date:"d M Y" }}</td><td>{{ r.franchise__name }}</td><td class="num">{{ r.bills }}</td><td class="num">₹{{ r.total|qty }}</td></tr>{% empty %}<tr><td colspan="4" class="text-clay">No sales in this period.</td></tr>{% endfor %}
+</tbody>{% if rows %}<tfoot><tr class="border-t-2 border-line font-semibold"><td colspan="3">Total</td><td class="num">₹{{ grand|qty }}</td></tr></tfoot>{% endif %}</table></div>
+{% endblock %}

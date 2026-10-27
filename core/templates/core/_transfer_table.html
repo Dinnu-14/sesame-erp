@@ -1,0 +1,10 @@
+{% load core_extras %}
+<div class="card overflow-x-auto"><table class="w-full text-sm">
+<thead><tr><th>Date</th><th>To</th><th>Items (kg)</th><th>Status</th><th></th></tr></thead>
+<tbody>{% for t in rows %}<tr>
+<td>{{ t.date|date:"d M" }}</td>
+<td>{{ t.destination }}{% if t.local_shop %}<div class="text-xs text-clay">Local shop</div>{% endif %}</td>
+<td>{% include "core/_items.html" with items=t.items.all %}</td>
+<td>{% include "core/_status.html" with status=t.status label=t.get_status_display %}</td>
+<td class="num">{% if user.role == 'fmain' and t.status == 'sent' %}<a class="btn" href="{% url 'confirm_transfer' t.id %}">Confirm</a>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="5" class="text-clay">Nothing yet.</td></tr>{% endfor %}</tbody></table></div>

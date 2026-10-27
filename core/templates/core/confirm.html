@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}{% load core_extras %}
+{% block title %}Confirm receipt{% endblock %}
+{% block content %}
+<div class="max-w-xl">
+<h1 class="font-display text-3xl font-bold mb-1">Confirm receipt</h1>
+<p class="text-clay mb-4">Sent by the factory on {{ t.date|date:"d M Y" }}. Enter what actually arrived at your shop.</p>
+<form method="post" class="card p-5 space-y-4">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="fw"><label class="block text-sm font-medium mb-1">{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endfor %}
+<div class="flex gap-3"><button class="btn">Confirm and add to stock</button><a class="btn btn-ghost" href="{% url 'home' %}">Back</a></div></form></div>
+{% endblock %}

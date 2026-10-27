@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+{% block title %}Local shops{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl font-bold mb-4">Local shops</h1>
+<div class="grid md:grid-cols-2 gap-4">
+<form method="post" class="card p-5 space-y-3">{% csrf_token %}<div class="font-semibold">Add a shop</div>
+{% for field in form %}<div class="fw"><label class="block text-sm mb-1">{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endfor %}<button class="btn">Add shop</button></form>
+<div class="card overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Shop</th><th>Place</th><th>Phone</th></tr></thead><tbody>
+{% for s in shops %}<tr><td>{{ s.name }}</td><td>{{ s.place }}</td><td>{{ s.phone }}</td></tr>{% empty %}<tr><td colspan="3" class="text-clay">No shops yet.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

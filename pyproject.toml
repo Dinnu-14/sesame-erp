@@ -1,0 +1,17 @@
+[project]
+name = "sufala-sesame"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+  "Django>=5.0,<6.0",
+  "whitenoise>=6.6",
+  "dj-database-url>=2.1",
+  "psycopg[binary]>=3.1",
+]
+
+[tool.vercel]
+entrypoint = "sesame.wsgi:application"
+
+# Runs on every Vercel deploy: collects static files and updates the database tables.
+[tool.vercel.scripts]
+build = "python manage.py collectstatic --noinput && python manage.py migrate --noinput"

@@ -1,0 +1,1 @@
+{% load core_extras %}{% for it in items %}<div>{{ it.product|plabel }}: {{ it.qty_sent|qty }}{% if it.qty_received is not None and it.qty_received != it.qty_sent %} <span class="text-red-700">(got {{ it.qty_received|qty }})</span>{% endif %}</div>{% endfor %}

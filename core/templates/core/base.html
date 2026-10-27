@@ -1,0 +1,83 @@
+{% load core_extras %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Sufala{% endblock %} · Sufala Sesame</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { cream:'#F6EFE3', paper:'#FFFBF4', ink:'#1B1713', toast:'#B4691F', leaf:'#2F5D3A', line:'#E4D8C3', clay:'#8A7A63' },
+  fontFamily: { display:['Fraunces','Georgia','serif'], sans:['"Instrument Sans"','system-ui','sans-serif'] }
+}}}
+</script>
+<style>
+  body{background:#F6EFE3;color:#1B1713;font-family:'Instrument Sans',system-ui,sans-serif}
+  .input,select.input,textarea.input,.fw input:not([type=checkbox]),.fw select,.fw textarea{width:100%;border:1px solid #D8C9AE;background:#FFFBF4;border-radius:8px;padding:.6rem .75rem;font-size:1rem}
+  .input:focus,.fw input:focus,.fw select:focus,.fw textarea:focus{outline:2px solid #B4691F;outline-offset:1px}
+  .btn{display:inline-block;background:#1B1713;color:#FFFBF4;border-radius:8px;padding:.6rem 1.1rem;font-weight:600;cursor:pointer;border:0}
+  .btn:hover{background:#B4691F}
+  .btn-ghost{background:transparent;color:#1B1713;border:1px solid #D8C9AE}
+  .btn-ghost:hover{background:#EFE4D0;color:#1B1713}
+  .card{background:#FFFBF4;border:1px solid #E4D8C3;border-radius:14px}
+  th{font-weight:600;color:#8A7A63;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+  td,th{padding:.55rem .75rem;text-align:left}
+  tbody tr{border-top:1px solid #EFE4D0}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .errorlist{color:#A32020;font-size:.85rem;list-style:none;padding:0;margin:.25rem 0 0}
+  .overflow-x-auto{-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+{% if user.is_authenticated %}
+<header class="bg-ink text-cream">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <a href="{% url 'home' %}" class="font-display text-xl font-bold tracking-tight">Sufala <span class="text-toast">Sesame</span></a>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="hidden sm:inline text-cream/70">{{ user.first_name|default:user.username }} · {{ user.get_role_display }}{% if user.franchise %} · {{ user.franchise.name }}{% endif %}</span>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="underline underline-offset-4 hover:text-toast">Log out</button></form>
+    </div>
+  </div>
+  <nav class="max-w-6xl mx-auto px-4 pb-2 flex gap-1 overflow-x-auto text-sm whitespace-nowrap">
+    {% url 'home' as u %}<a class="px-3 py-1.5 rounded-md {% if request.path == u %}bg-toast text-white{% else %}hover:bg-white/10{% endif %}" href="{{ u }}">Dashboard</a>
+    {% if user.role == 'super' %}
+      {% include "core/_nav.html" with name="franchise_list" label="Franchises" %}
+      {% include "core/_nav.html" with name="user_list" label="Users" %}
+      {% include "core/_nav.html" with name="inward_list" label="Loads in" %}
+      {% include "core/_nav.html" with name="transfer_list" label="Distribution" %}
+      {% include "core/_nav.html" with name="sales_report" label="Sales" %}
+      {% include "core/_nav.html" with name="mismatches" label="Mismatches" %}
+      {% include "core/_nav.html" with name="waste_list" label="Waste" %}
+      <a class="px-3 py-1.5 rounded-md hover:bg-white/10" href="/admin/">Admin panel</a>
+    {% elif user.role == 'factory' %}
+      {% include "core/_nav.html" with name="inward_list" label="Loads in" %}
+      {% include "core/_nav.html" with name="stock" label="Godown stock" %}
+      {% include "core/_nav.html" with name="transfer_list" label="Transfers" %}
+      {% include "core/_nav.html" with name="shops" label="Local shops" %}
+      {% include "core/_nav.html" with name="waste_list" label="Waste buyback" %}
+    {% elif user.role == 'fmain' %}
+      {% include "core/_nav.html" with name="transfer_list" label="Received" %}
+      {% include "core/_nav.html" with name="sale_list" label="Sales" %}
+      {% include "core/_nav.html" with name="franchise_stock" label="Stock" %}
+      {% include "core/_nav.html" with name="extraction_list" label="Oil" %}
+    {% else %}
+      {% include "core/_nav.html" with name="sale_new" label="New bill" %}
+      {% include "core/_nav.html" with name="sale_list" label="Bills" %}
+      {% include "core/_nav.html" with name="extraction_new" label="Oil extraction" %}
+      {% include "core/_nav.html" with name="waste_send" label="Send waste" %}
+      {% include "core/_nav.html" with name="franchise_stock" label="Stock" %}
+    {% endif %}
+  </nav>
+</header>
+{% endif %}
+<main class="max-w-6xl mx-auto px-4 py-6">
+  {% for msg in messages %}
+  <div class="mb-4 rounded-lg px-4 py-3 text-sm {% if msg.tags == 'error' %}bg-red-100 text-red-900{% elif msg.tags == 'warning' %}bg-amber-100 text-amber-900{% else %}bg-emerald-100 text-emerald-900{% endif %}">{{ msg }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
